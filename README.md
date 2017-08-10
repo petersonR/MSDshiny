@@ -2,6 +2,8 @@
 
 The Multistate Simulation Designer application provides a useful and streamlined way to plan and power clinical trials with multistate outcomes. 
 
+![](figures/multistate_title_page.PNG)
+
 # Background
 
 This `shiny` app was developed with the goal of aiding in the planning and powering of clinical trials with multistate outcomes. The app allows for users to explore various multistate structures, and within them to explicitly visualize the assumptions they are making when it comes to baseline hazards and assumed treatment effects. Once all of the assumptions are made, it is straightforward to perform a simulation of either a single study (which provides a snapshot of the results from an actual study if it was to be performed), or a large set of studies (which provides information on the power to detect treatment effects and the variability in the estimates from the study). 
