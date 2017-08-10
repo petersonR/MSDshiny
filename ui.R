@@ -190,7 +190,7 @@ ui <- fluidPage(
   
   # Footer
   hr(
-    HTML('Version 1.0 ---- &#169; 2017 Mayo Clinic'),
+    HTML('Version 1.0 ---- &#169; 2017 Mayo Foundation for Medical Education and Research'),
     p(
       'App developed by R. A. Peterson',
       br(),
