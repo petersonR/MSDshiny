@@ -19,8 +19,6 @@ library(xtable)
 library(diagram)
 library(shinyBS)
 
-# setwd('rpgm/simMSM_shiny')
-
 remove(list = objects())
 
 source('shiny_helpers.R')
