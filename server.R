@@ -495,13 +495,27 @@ server <- function(input, output, session) {
           'The maximum time on study after which point all subjects will be censored'
         ),
         tipify(
-          sliderInput('alpha', 'Significance level for (2-sided) test', 
-                      value = .05, min = 0, max = .2, ticks = F, width = '100%'),
+          radioButtons('indivAlphas', "Set alpha for transitions:", c('Together', 'Separately'), inline = T),
           paste(
             'For the power calculations, this refers to the significance level for a 2-sided',
-            ' test of null hypothesis for each separate transition. Note that',
-            'this can be changed after the simulations have been run'
+            ' test of null hypothesis for each transition. Note that',
+            ' it can be changed after the simulations have been run'
           )
+        ),
+        conditionalPanel(
+          'input.indivAlphas ==  "Separately"',
+          inputPanel(
+            try(
+              lapply(seq(rv2$ntrans()), function(i) {
+                numericInput(paste0('alpha', i), rv2$transNames()[i], min = 0, 
+                             value = 0.05, step = .001)
+              }), TRUE)
+          )
+        ),
+        conditionalPanel(
+          'input.indivAlphas ==  "Together"',
+          inputPanel(numericInput('alpha', 'For each transition', value = .05, 
+                                  min = 0, step = .001, width = '100%'))
         ),
         tipify(
           numericInput('seed2', 'Seed for simulations:', min = 1, step = 1, value = sample(1:1000000, 1), width = '100%'),
@@ -525,6 +539,13 @@ server <- function(input, output, session) {
         )
       )
     )
+  })
+  
+  # Store individual alphas in reactive value
+  rv5$alphas <- reactive({
+    alphas <- c()
+    for(i in 1:rv2$ntrans()) alphas <- c(alphas, input[[paste0('alpha', i)]])
+    matrix(alphas, nrow = input$nSim, ncol = length(alphas), byrow = T)
   })
   
   # Perform simulation, store as reactive
@@ -621,9 +642,14 @@ server <- function(input, output, session) {
   output$sim2tab <- renderTable({
     res <- rv5$sim2Results()
     if(is.character(res)) return(NULL)
+    if(dim(res$pvals)[1] != input$nSim) return(NULL)
     
     # Calculate power + CI
-    rej <- res$pvals < input$alpha
+    if(input$indivAlphas == 'Together') {
+      rej <- res$pvals < input$alpha
+    } else {
+      rej <- res$pvals < rv5$alphas()
+    }
     pctReject <- as.character(round(apply(rej, 2, function(x) mean(x, na.rm = T)), 3))
     pctRejectCI <- apply(rej, 2, function(x) {
       try1 <- binom.test(sum(x, na.rm = T), length(x))
@@ -631,7 +657,7 @@ server <- function(input, output, session) {
     })
     
     # Power to detect any difference
-    anyrej <- apply(res$pvals, 1, function(x) any(x < input$alpha))
+    anyrej <- apply(rej, 1, any)
     anyrej_pretty <- as.character(round(mean(anyrej, na.rm = T), 3))
     try1 <- binom.test(sum(anyrej, na.rm = T), length(anyrej))
     anyrejCI <- paste0('[', paste(round(try1$conf.int,3), collapse = ', '), ']')
@@ -652,9 +678,10 @@ server <- function(input, output, session) {
     
     # Make pretty
     colnames(tab) <- c('True HR', 'Geometric mean estimated HR', 'Geometric SD', 
-                      paste0('Proportion p < ', round(input$alpha, 2)), '95% Clopper-Pearson CI', 'Number converged')
+                       'Proportion p < alpha', '95% Clopper-Pearson CI', 'Number converged')
     rownames(tab) <- c(rv2$transNames(), 'Any effect')
-    tab
+    tab[,c('True HR', 'Geometric mean estimated HR', 'Geometric SD', 'Number converged', 
+           'Proportion p < alpha', '95% Clopper-Pearson CI')]
   }, rownames = TRUE, align = 'c')
   
   # Plot for simulation 2
