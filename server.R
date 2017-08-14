@@ -186,11 +186,19 @@ server <- function(input, output, session) {
   
   # Main UI for page 3 - list of sliders, 1 by default for no true effect
   output$trtUI <- renderUI({
-    try(lapply(seq(rv2$ntrans()), function(i) {
-      sliderInput(paste0('cc', i), rv2$transNames()[i], .2, 8, 
-                  value = 1, step = .01, ticks = F)
-    }), TRUE)
+    verticalLayout(
+      try(lapply(seq(rv2$ntrans()), function(i) {
+        sliderInput(paste0('cc', i), rv2$transNames()[i], .2, 8, 
+                    value = 1, step = .01, ticks = F)
+      }), TRUE),
+      actionButton('resetTrtUI', 'Reset all to 1')
+    )
   })
+  
+  observeEvent(input$resetTrtUI, {
+    lapply(seq(rv2$ntrans()), function(i) updateNumericInput(session, paste0('cc', i), value = 1)) 
+  })
+  
   
   # reactive for params including the treatment effects, to be used in simulations
   rv3$params <- reactive({
