@@ -12,10 +12,10 @@ A full tutorial is pending publication of a corresponding article. Feel free to 
 
 # Getting Started
 
-It is straightforward to initiate an instance of the Multistate Simulation Designer using the 3 steps below (it is assumed that R is installed):
+It is straightforward to initiate an instance of the Multistate Simulation Designer using the 3 steps below (it is assumed that R is installed and an internet connection is available):
 
 1) Open an R session
-2) Make sure `shiny` is installed and attached:
+2) Make sure `shiny` is installed and loaded:
 
 `if(!require(shiny)) install.packages('shiny')`
 
