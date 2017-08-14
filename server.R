@@ -773,10 +773,10 @@ server <- function(input, output, session) {
     }, {
       hide('sim1plot')
       hide('sim1tabs')
-      toggleState('downloadsim1')
+      disable('downloadsim1')
       hide('sim2plot')
       hide('sim2tab')
-      toggleState('downloadsim2')
+      disable('downloadsim2')
   })
   
   # enable download /show output upon hitting of runsim1 button
