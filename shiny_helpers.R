@@ -43,13 +43,12 @@ plotCurves <- function(params, max_time = 15, curve_type = c('CHaz')) {
   nPlots <- length(unique(params$from))
   heightdiff <- 2
   if(nPlots == 2) layout(matrix(c(1:3, 1:3), nrow = 3, ncol = 2), heights = c(heightdiff,heightdiff,1))
-  if(nPlots == 3) layout(matrix(c(1:3, 4), nrow = 2, ncol = 2, byrow = T))
-  if(nPlots == 4) layout(matrix(c(1:5, 5), nrow = 3, ncol = 2, byrow = T), heights = c(heightdiff,heightdiff, 1))
+  if(nPlots >= 3) layout(matrix(c(1:5, 5), nrow = 3, ncol = 2, byrow = T), heights = c(heightdiff,heightdiff, 1))
   if(nPlots == 1) layout(matrix(c(1:2), nrow = 2, ncol = 1), heights = c(heightdiff,1))
   
   cols <- params$cols
   
-  par(mar = c(5,4,4,2) + .1)
+  par(mar = c(4,3,3,1))
   for(i in levels(params$from)[-length(levels(params$from))]) {
     
     fromIDX <- params$from == i

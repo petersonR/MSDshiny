@@ -87,7 +87,7 @@ ui <- fluidPage(
                      )
                    ))
                ),
-               plotOutput('plotBHR', width = '100%', height = '700px'))
+               plotOutput('plotBHR', width = '700px', height = '690px'))
       )
     ), 
     
@@ -116,7 +116,7 @@ ui <- fluidPage(
                         )),
                  column(4, numericInput('max_t4plotTRT', 'Max time plotted', value = 15))
                ),
-               plotOutput('plotTRT', width = '100%', height = '700px'))
+               plotOutput('plotTRT', width = '700px', height = '690px'))
       )
     ),
     
