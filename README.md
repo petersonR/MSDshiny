@@ -6,9 +6,9 @@ The Multistate Simulation Designer application provides a useful and streamlined
 
 # Background
 
-This `shiny` app was developed with the goal of aiding in the planning and powering of clinical trials with multistate outcomes. The app allows for users to explore various multistate structures, and within them to explicitly visualize the assumptions they are making when it comes to baseline hazards and assumed treatment effects. Once all of the assumptions are made, it is straightforward to perform a simulation of either a single study (which provides a snapshot of the results from an actual study if it was to be performed), or a large set of studies (which provides information on the power to detect treatment effects and the variability in the estimates from the study). 
+This `shiny` app was developed with the goal of aiding in the planning and powering of clinical trials with multistate outcomes. The app allows for users to explore various multistate structures, and within them to explicitly visualize the assumptions they are making when it comes to baseline hazards and assumed treatment effects. Once all of the assumptions are made, users can simulate either a single study (which provides a snapshot of the results from an actual study if it were to be performed), or a set of studies (which provides information on the power to detect treatment effects in multistate Cox models as well as the variability in the estimates from the study). 
 
-A full tutorial is pending.
+A full tutorial is pending publication of a corresponding article. Feel free to email me for more information in the mean time.
 
 # Getting Started
 
@@ -24,7 +24,7 @@ It is straightforward to initiate an instance of the Multistate Simulation Desig
 3) Run the code: 
 
 `
-runGitHub("petersonRA/MSDshiny")
+runGitHub("petersonR/MSDshiny")
 `
 
 
@@ -50,4 +50,4 @@ This will run the simulation many times in order to find the operating character
 
 ## References
 
-The References tab cites the most important packages used in the development of the application, as well as provides the session info to aid in reproducability. 
+The References tab cites the most important packages used in the development of the application, as well as provides the session info to aid in reproducibility. 
