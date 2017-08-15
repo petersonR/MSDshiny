@@ -803,13 +803,13 @@ server <- function(input, output, session) {
   
   ##### References #####
   
-  ## Add tutorial download handler for link in references
-  # output$tutorialDL <- downloadHandler(
-  #   filename = 'tutorial.pdf',
-  #   content = function(file) {
-  #     file.copy("www/tutorial.pdf", file)
-  #   }
-  # )
+  # Add tutorial download handler for link in references
+  output$tutorialDL <- downloadHandler(
+    filename = 'MSD_tutorial.pdf',
+    content = function(file) {
+      file.copy("www/MSD_tutorial.pdf", file)
+    }
+  )
   
   output$refs <- renderUI({
     citesHTML <- c()

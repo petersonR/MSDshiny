@@ -165,18 +165,18 @@ ui <- fluidPage(
     # Tab 6: References
     tabPanel(
       'References',
-      # fluidRow(
-      #   column(
-      #     12,
-      #     align = 'center',
-      #     tags$h5(
-      #       paste(
-      #         'This application is coded entirely in R. For further',
-      #         'assistance, the tutorial can be downloaded from the link below.'
-      #       )
-      #     ),
-      #     downloadLink('tutorialDL', label = "Download tutorial", class = NULL)
-      #   )), 
+      fluidRow(
+        column(
+          12,
+          align = 'center',
+          tags$h5(
+            paste(
+              'This application is coded entirely in R. For further',
+              'assistance, the tutorial can be downloaded from the link below.'
+            )
+          ),
+          downloadLink('tutorialDL', label = "Download tutorial", class = NULL)
+        )),
       tags$h5(paste0(
         'The application relies on several R packages:'
       )),
