@@ -141,7 +141,7 @@ The Power Simulation tab shown in Figure 5 is set up similarly to the Single Sim
 
 3) Run simulation: Depending on how many simulations one performs (and how complex the multistate structure), this could potentially take a while. When the button is pressed, a progress bar will be displayed in the lower right hand corner of the screen.
 
-4) Download: The file downloaded is a .RData file containing a list a list called "sim2Results" with the following components: simResults (a data frame storing all the coefficients, p-values, and convergence messages from each simulated data set), params (a data frame of parameter values from the previous tabs), and simDetails (a list containing the simulation inputs in this tab).
+4) Download: The file downloaded is a .RData file containing a list called "sim2Results" with the following components: simResults (a data frame storing all the coefficients, p-values, and convergence messages from each simulated data set), params (a data frame of parameter values from the previous tabs), and simDetails (a list containing the simulation inputs in this tab).
 
 Once a user hits "Run simulation", then the output appears. The first piece of output is a series of box plots of the estimated hazard ratios for all simulations. Specifically, the Cox PH multistate models are calculated and the estimated hazard ratios between treatment and placebo group for each transition are recorded and plotted here. Green dots indicate the "Truth" according to the assumptions made in the "Treatment Effects" tab. Note that in some cases, points are omitted if some models fail to converge (as is often the case when some transitions are rare).  If this happens, a note will appear on the plot. 
 
