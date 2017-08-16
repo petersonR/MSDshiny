@@ -74,6 +74,8 @@ The number of plots and transitions that show up on this page depends on the "Mu
 
 One thing to note from here on is that the scale of "time" in this application is internally consistent in the app, so users can interpret it as whatever unit they would like so long as they do so consistently throughout the application. In this tutorial, we refer to it as months.
 
+(Note: If reading this on GitHub, inline math is not yet supported at the time of writing, so the formulas may not appear correctly. If this is a concern, please see the pdf version of this tutorial in the www/ subdirectory.)
+
 The inputs on this page are: 
 
 1) Transition-specific $\lambda$'s and $\gamma$'s for the time-to-event generating distribution.  For each transition, users can set the time-to-event distribution parameters and confirm them in the plot on the right. Higher values of $\lambda$ increase the hazard (given $\gamma$), whereas changing the value  of $\gamma$ will change the shape of the distribution. The Weibull distribution as parameterized here has two limits: $\lambda > 0$ and $\gamma > 0$. Thus if a user attempts to select 0, the internal value gets changed to the `.Machine\$double.eps` value (if this does happen, it is likely that the models fit later on will have trouble converging for this transition). Users should avoid leaving these fields blank as it may cause the application to perform unexpectedly.
