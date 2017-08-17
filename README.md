@@ -27,7 +27,7 @@ It is straightforward to initiate an instance of the Multistate Simulation Desig
 runGitHub("petersonR/MSDshiny")
 `
 
-Note that the app is optimized for Google Chrome, and some features may be limited in other browsers.
+Note that the app is optimized for Google Chrome, and some features may be limited in other browsers. Additionally, the first time this is run on a new machine may take a minute to install the required packages.
 
 # Using the application
 
