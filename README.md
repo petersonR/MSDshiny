@@ -17,8 +17,7 @@ It is straightforward to initiate an instance of the Multistate Simulation Desig
 1) Open an R session
 2) Make sure `shiny` is installed and loaded:
 
-`if(!require(shiny)) install.packages('shiny')`
-
+`if(!require(shiny)) install.packages('shiny')`  
 `library(shiny)`
 
 3) Run the code: 
