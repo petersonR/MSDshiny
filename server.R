@@ -427,7 +427,7 @@ server <- function(input, output, session) {
   # Sim 1 main plot
   output$sim1plot <- renderPlot({
     
-    ylabel <- 'Current State'
+    ylabel <- 'Pr. in stateState'
     if(input$nstates == 2) ylabel <- 'Survival'
     
     plot(
