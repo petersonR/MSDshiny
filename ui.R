@@ -159,7 +159,7 @@ ui <- fluidPage(
                       uiOutput('sim2UI')),
                column(8,
                       plotOutput('sim2plot'),
-                      tableOutput('sim2tab')))
+                      uiOutput('sim2tabs')))
     ),
     
     # Tab 6: References

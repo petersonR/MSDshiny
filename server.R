@@ -487,7 +487,7 @@ server <- function(input, output, session) {
           'The number of full data sets to simulate (this would be akin to running the study X amount of times)'
         ),
         tipify(
-          numericInput('N2', 'Sample size (per group)', value = 350, width = '100%'),
+          numericInput('N2', 'Sample size (per group)', value = 250, width = '100%'),
           'Select the number of subjects per group for a single simulated data set (total = N * 2)'
         ),
         tipify(
@@ -575,7 +575,8 @@ server <- function(input, output, session) {
     maxfollowup2 <- max(.1, input$maxfollowup2)
     
     ## Set up results matrix
-    coefs <- pvals <- converged <- matrix(NA, ncol = rv2$ntrans(), nrow = input$nSim)
+    coefs <- pvals <- converged <- 
+      ss_total <- ss_events <- matrix(NA, ncol = rv2$ntrans(), nrow = input$nSim)
     
     ## Iterate through all sims
     withProgress(message = 'Running Simulations', value = 0, {
@@ -593,6 +594,10 @@ server <- function(input, output, session) {
           res$event <- ifelse(res$event == 'censor', 0, 1)
           df_mstate <- res[res$delta == 1,]
           fo <- Surv(exit, event) ~ x1
+          # Store sample size information
+          ss_total[i, ] <- length(df_mstate$event)
+          ss_events[i, ] <- sum(df_mstate$event)
+          
         } else {
           res <- res[res$to != 'censor',]
           class(res) <- c('msdata', 'data.frame')
@@ -610,7 +615,9 @@ server <- function(input, output, session) {
             paste0('Surv(time = entry, time2 = exit, status) ~ strata(trans) + ', 
                    paste0('x1.', 1:length(unique(res$trans)), collapse  = ' + '))
           )
-          
+          # Store sample size information
+          ss_total[i, ] <- table(res$trans)
+          ss_events[i, ] <- table(res$trans, res$status)[, 2]
         }
         
         # myTryCatch will catch errors + warning messages
@@ -643,11 +650,12 @@ server <- function(input, output, session) {
       }
     })
     
-    list(coefs = coefs, pvals = pvals, converged = converged)
+    list(coefs = coefs, pvals = pvals, converged = converged, 
+         ss_total = ss_total, ss_events = ss_events)
   })
 
   # Power table for simulation 2
-  output$sim2tab <- renderTable({
+  output$sim2powertab <- renderTable({
     res <- rv5$sim2Results()
     if(is.character(res)) return(NULL)
     if(dim(res$pvals)[1] != input$nSim) return(NULL)
@@ -670,27 +678,89 @@ server <- function(input, output, session) {
     try1 <- binom.test(sum(anyrej, na.rm = T), length(anyrej))
     anyrejCI <- paste0('[', paste(round(try1$conf.int,3), collapse = ', '), ']')
     
+    # Distinguish between power and T1 error
+  type <- ifelse(rv3$params()$trtHR == 1, 'Type I Error', 'Power')
+    type_any <- 'Power'
+    if(all(type == 'Type I Error')) type_any <- 'Type I Error'
+    
+    # Check convergence
+    nconverged <- colSums(res$converged == 'yes')
+    
+    # Amalgamate
+    tab <- cbind(type, pctReject, pctRejectCI, nconverged)
+    tab <- rbind(tab, c(type_any, anyrej_pretty, anyrejCI, ''))
+    
+    # Make pretty
+    colnames(tab) <- c('Type', 'Proportion p < alpha', '95% Clopper-Pearson CI', 'Number converged')
+    rownames(tab) <- c(rv2$transNames(), 'Any effect')
+    tab
+  }, rownames = TRUE, align = 'c')
+  
+  # Calculate means and SEs for each transition
+  output$sim2meanstab <- renderTable({
+    res <- rv5$sim2Results()
+    if(is.character(res)) return(NULL)
+    if(dim(res$pvals)[1] != input$nSim) return(NULL)
+    
     # Calculate mean/sd of coef estimates
     meanEffect <- as.character(round(apply(res$coefs, 2, function(x) (exp(mean(x, na.rm = T)))), 3))
     seEffect <- as.character(round(apply(res$coefs, 2, function(x) exp(sd(x, na.rm = T))), 3))
     
     # Make pretty the true values
     trueDiff <- as.character(round(rv3$params()$trtHR,2))
-    
-    # Check convergence
-    nconverged <- colSums(res$converged == 'yes')
-    
-    # Amalgamate
-    tab <- cbind(trueDiff, meanEffect, seEffect, pctReject, pctRejectCI, nconverged)
-    tab <- rbind(tab, c('', '', '', anyrej_pretty, anyrejCI, ''))
+    tab <- cbind(trueDiff, meanEffect, seEffect)
     
     # Make pretty
-    colnames(tab) <- c('True HR', 'Geometric mean estimated HR', 'Geometric SD', 
-                       'Proportion p < alpha', '95% Clopper-Pearson CI', 'Number converged')
-    rownames(tab) <- c(rv2$transNames(), 'Any effect')
-    tab[,c('True HR', 'Geometric mean estimated HR', 'Geometric SD', 'Number converged', 
-           'Proportion p < alpha', '95% Clopper-Pearson CI')]
+    colnames(tab) <- c('True HR', 'Geometric mean estimated HR', 'Geometric SD')
+    rownames(tab) <- c(rv2$transNames())
+    tab
   }, rownames = TRUE, align = 'c')
+  
+  # Calculate mean sample size for each transition
+  output$sim2meanntab <- renderTable({
+    res <- rv5$sim2Results()
+    if(is.character(res)) return(NULL)
+    if(dim(res$pvals)[1] != input$nSim) return(NULL)
+    
+    # Calculate mean/sd of ss 
+    mean_ss_total <- as.character(round(apply(res$ss_total, 2, function(x) mean(x, na.rm = T)), 1))
+    mean_ss_events <- as.character(round(apply(res$ss_events, 2, function(x) mean(x, na.rm = T)), 1))
+    se_ss_total <- as.character(round(apply(res$ss_total, 2, function(x) sd(x, na.rm = T)), 1))
+    se_ss_events <- as.character(round(apply(res$ss_events, 2, function(x) sd(x, na.rm = T)), 1))
+    
+    tab <- cbind(
+      paste0(mean_ss_total, ' (', se_ss_total, ')'),
+      paste0(mean_ss_events, ' (', se_ss_events, ')')
+    )
+    
+    # Make pretty
+    colnames(tab) <- c('Mean # at risk (sd)', 'Mean # events (sd)')
+    rownames(tab) <- c(rv2$transNames())
+    tab
+  }, rownames = TRUE, align = 'r')
+  
+  
+  
+  # Combine simulation 2 tables
+  output$sim2tabs <- renderUI({
+    tabsetPanel(
+      tabPanel('Power Estimation', 
+               tipify(
+                 tableOutput('sim2powertab'), 
+                 'Change the alphas on the left to see how the power changes'
+               )),
+      tabPanel('Means and SEs', 
+               tableOutput('sim2meanstab')),
+      tabPanel('Sample size info', 
+               tipify(
+                 tableOutput('sim2meanntab'),
+                 paste0(
+                   'This table shows the mean total sample size for each transition',
+                   ' as well as the mean number of events observed in each transition.'
+                 )
+               ))
+    )
+  })
   
   # Plot for simulation 2
   output$sim2plot <- renderPlot({
@@ -783,7 +853,7 @@ server <- function(input, output, session) {
       hide('sim1tabs')
       disable('downloadsim1')
       hide('sim2plot')
-      hide('sim2tab')
+      hide('sim2tabs')
       disable('downloadsim2')
   })
   
@@ -797,7 +867,7 @@ server <- function(input, output, session) {
   # enable download /show output upon hitting of runsim2 button
   observeEvent(input$runsim2, {
     show('sim2plot')
-    show('sim2tab')
+    show('sim2tabs')
     enable('downloadsim2')
   })
   
@@ -917,7 +987,7 @@ server <- function(input, output, session) {
   
   addPopover(
     session,
-    'sim2tab',
+    'sim2powertab',
     '',
     paste0(
       'Summary results for all of the simulations are presented here. ', 
