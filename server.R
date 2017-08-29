@@ -628,7 +628,7 @@ server <- function(input, output, session) {
         # no coefficients converged
         if(length(fitMS$error)) {
           pvals[i,] <- coefs[i,] <- NA
-          converged[i,] <- fitMS$error
+          converged[i,] <- paste(fitMS$error, collapse = ';')
         } else {
           s <- summary(fitMS$value)
           
