@@ -12,7 +12,9 @@ This `shiny` app was developed with the goal of aiding in the planning and power
 
 # Getting Started
 
-It is straightforward to initiate an instance of the Multistate Simulation Designer using the 3 steps below (it is assumed that R is installed and an internet connection is available):
+The Multistate Simulation Designer is currently being freely hosted at https://ph-shiny.iowa.uiowa.edu/rpterson/MSDshiny/.
+
+To run the shiny app locally, it is straightforward to initiate an instance of the Multistate Simulation Designer using the 3 steps below (it is assumed that R is installed and an internet connection is available):
 
 1) Open an R session
 2) Make sure `shiny` is installed and loaded:
