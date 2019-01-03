@@ -194,8 +194,7 @@ ui <- fluidPage(
     p(
       'App developed by R. A. Peterson',
       br(),
-      'Notice a bug? Please ',
-      a(href = 'mailto:Peterson.Ryan1@mayo.edu', 'email me')
+      a(href = 'https://www.github.com/petersonR/MSDshiny', 'View source code at GitHub')
       # , 
       # br(),
       # HTML('Last update: ', format(Sys.Date(), '%m/%d/%Y'))
